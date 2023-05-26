@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="midle_black">#272626</color>
     <color name="buttonCancel">#BA0C0C</color>
+    <color name="fondo">#0D6B98</color>
 </resources>
