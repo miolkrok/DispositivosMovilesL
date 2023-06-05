@@ -4,5 +4,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="midle_black">#272626</color>
     <color name="buttonCancel">#BA0C0C</color>
+    <color name="buttonIngresar">#D55252</color>
     <color name="fondo">#0D6B98</color>
+    <color name="gris">#ACB5BA</color>
+    <color name="twitter">#00acee</color>
+    <color name="facebook">#3b5998</color>
 </resources>
