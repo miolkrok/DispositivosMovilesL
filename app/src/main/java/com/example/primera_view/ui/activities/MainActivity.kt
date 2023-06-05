@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.primera_view.databinding.ActivityMainBinding
+import com.example.primera_view.login.validator.LoginValidator
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.*
 
@@ -50,14 +51,33 @@ class MainActivity : AppCompatActivity() {
         //    Toast.makeText(this, "Este es un ejemplo" , Toast.LENGTH_SHORT).show()
        // }
 
+//        binding.button1.setOnClickListener{
+//            var intent = Intent(
+//                this,
+//                MainActivity2::class.java
+//            )
+//            intent.putExtra("var1" , binding.edit.text.toString())
+//
+//            startActivity(intent)
+//        }
         binding.button1.setOnClickListener{
-            var intent = Intent(
-                this,
-                MainActivity2::class.java
-            )
-            intent.putExtra("var1" , binding.edit.text.toString())
-
-            startActivity(intent)
+            val loginVal = LoginValidator()
+            val check = loginVal.checkLogin( binding.editName.text.toString(), binding.editPass.text.toString())
+//            if ( binding.editName.text.toString() == "admin" && binding.editName.text.toString() == "admin"){
+            if (check){
+                var intent = Intent(
+                    this,
+                    MainActivity2::class.java
+                )
+                intent.putExtra("var1" ,
+                    ""
+//                binding.edit_.text.toString()
+                )
+                intent.putExtra("var2", 2)
+                startActivity(intent)
+            }else{
+                Snackbar.make(binding.textView, "Usuario o contraseña invalidos", Snackbar.LENGTH_LONG).show()
+            }
         }
 
     }

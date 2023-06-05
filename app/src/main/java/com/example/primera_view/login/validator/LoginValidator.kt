@@ -1,6 +1,6 @@
-package com.exam.dispositivosmoviles.login.validator
+package com.example.primera_view.login.validator
 
-import com.exam.dispositivosmoviles.data.entities.LoginUser
+import com.example.primera_view.data.entities.LoginUser
 
 class LoginValidator {
 
