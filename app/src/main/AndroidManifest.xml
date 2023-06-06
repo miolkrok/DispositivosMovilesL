@@ -17,9 +17,6 @@
             android:exported="true" />
         <activity
             android:name=".ui.activities.MainActivity"
-            android:exported="true"/>
-        <activity
-            android:name=".ui.activities.MainActivity3"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
