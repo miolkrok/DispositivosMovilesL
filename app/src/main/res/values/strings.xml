@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">primera-view</string>
+    <string name="menu_favoritos">Favoritos</string>
+    <string name="menu_inicio">Inicio</string>
+    <string name="menu_apis">apis</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="primer_fragment">Primer fragment</string>
 </resources>
