@@ -8,6 +8,8 @@ import android.util.Log
 import com.example.primera_view.ui.fragments.FirstFragment
 import com.example.primera_view.R
 import com.example.primera_view.databinding.ActivityMain2Binding
+import com.example.primera_view.ui.fragments.FragmentSecond
+import com.example.primera_view.ui.fragments.FragmentThird
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity2 : AppCompatActivity() {
@@ -63,23 +65,20 @@ class MainActivity2 : AppCompatActivity() {
                     true
                 }
                 R.id.fav -> {
-                    var suma: Int =0
-                    for(i in listOf(8,12,13)){
-                        suma += i
-                    }
-                    // Respond to navigation item 2 click
-                    Snackbar.make(binding.editTextText, "la suma es: ${suma}",Snackbar.LENGTH_LONG)
-                        .show()
+                    val frag2 = FragmentSecond()
+                    val transsaction2 = supportFragmentManager.beginTransaction()
+                    transsaction2.add(binding.frameContainer.id, frag2)
+                    transsaction2.addToBackStack(null)
+                    transsaction2.commit()
                     true
                 }
                 R.id.api -> {
                     // Respond to navigation item 2 click
-                    var suma: Int =0
-                    for(i in listOf(30,12,13)){
-                        suma += i
-                    }
-                    Snackbar.make(binding.editTextText, "la suma es: ${suma}",Snackbar.LENGTH_LONG)
-                        .show()
+                    val frag3 = FragmentThird()
+                    val transsaction3 = supportFragmentManager.beginTransaction()
+                    transsaction3.add(binding.frameContainer.id, frag3)
+                    transsaction3.addToBackStack(null)
+                    transsaction3.commit()
                     true
                 }
                 else -> false
