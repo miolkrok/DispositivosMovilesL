@@ -5,4 +5,8 @@
     <string name="menu_apis">apis</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="primer_fragment">Primer fragment</string>
+    <string name="segundo_fragment">ChatIn: Siempre Contigo</string>
+    <string name="tercer_fragment">Gracias por Visitarnos!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

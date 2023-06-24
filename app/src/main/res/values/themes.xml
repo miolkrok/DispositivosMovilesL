@@ -9,5 +9,9 @@
 
     <style name="Theme.Primeraview" parent="Base.Theme.Primeraview" />
 
+    <style name="ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/twitter</item>
+    </style>
+
 
 </resources>
