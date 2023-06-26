@@ -5,9 +5,13 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.FragmentManager
 import com.example.primera_view.ui.fragments.FirstFragment
 import com.example.primera_view.R
 import com.example.primera_view.databinding.ActivityMain2Binding
+import com.example.primera_view.ui.fragments.FragmentSecond
+import com.example.primera_view.ui.fragments.FragmentThird
+import com.example.primera_view.ui.utilities.FragmentsManager
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity2 : AppCompatActivity() {
@@ -55,31 +59,38 @@ class MainActivity2 : AppCompatActivity() {
             when(item.itemId) {
                 R.id.inicio -> {
                     // Respond to navigation item 1 click
-                    val frag = FirstFragment()
-                    val transsaction = supportFragmentManager.beginTransaction()
-                    transsaction.add(binding.frameContainer.id, frag)
-                    transsaction.addToBackStack(null)
-                    transsaction.commit()
+                    FragmentsManager().replaceFragment(
+                        supportFragmentManager,
+                        binding.frameContainer.id,
+                        FirstFragment()
+                    )
+//                    val frag = FirstFragment()
+//                    val transsaction = supportFragmentManager.beginTransaction()
+//                    transsaction.replace(binding.frameContainer.id, frag)
+//                    transsaction.commit()
                     true
                 }
                 R.id.fav -> {
-                    var suma: Int =0
-                    for(i in listOf(8,12,13)){
-                        suma += i
-                    }
-                    // Respond to navigation item 2 click
-                    Snackbar.make(binding.editTextText, "la suma es: ${suma}",Snackbar.LENGTH_LONG)
-                        .show()
+
+                    FragmentsManager().addFragment(
+                        supportFragmentManager,
+                        binding.frameContainer.id,
+                        FragmentSecond()
+                    )
+//                    val frag2 = FragmentSecond()
+//                    val transsaction2 = supportFragmentManager.beginTransaction()
+//                    transsaction2.add(binding.frameContainer.id, frag2)
+//                    transsaction2.addToBackStack(null)
+//                    transsaction2.commit()
                     true
                 }
                 R.id.api -> {
                     // Respond to navigation item 2 click
-                    var suma: Int =0
-                    for(i in listOf(30,12,13)){
-                        suma += i
-                    }
-                    Snackbar.make(binding.editTextText, "la suma es: ${suma}",Snackbar.LENGTH_LONG)
-                        .show()
+                    val frag3 = FragmentThird()
+                    val transsaction3 = supportFragmentManager.beginTransaction()
+                    transsaction3.add(binding.frameContainer.id, frag3)
+                    transsaction3.addToBackStack(null)
+                    transsaction3.commit()
                     true
                 }
                 else -> false
@@ -87,8 +98,12 @@ class MainActivity2 : AppCompatActivity() {
         }
     }
 
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+    }
     override fun onDestroy() {
         super.onDestroy()
     }
-
 }
