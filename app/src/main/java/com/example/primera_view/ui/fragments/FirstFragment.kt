@@ -19,6 +19,7 @@ import com.example.primera_view.R
 import com.example.primera_view.data.entities.MarvelChars
 import com.example.primera_view.databinding.FragmentFirstBinding
 import com.example.primera_view.logic.jikanLogic.JikanAnimeLogic
+import com.example.primera_view.logic.jikanLogic.MarvelLogic
 import com.example.primera_view.logic.lists.ListsItems
 import com.example.primera_view.ui.activities.DetailsMarvelItem
 import com.example.primera_view.ui.activities.MainActivity
@@ -82,7 +83,8 @@ class FirstFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             val rvAdapter = MarvelAdapter(
                 //ListsItems().returnMarvelChars(),
-                JikanAnimeLogic().getAllAnimes()
+//                JikanAnimeLogic().getAllAnimes(),
+                MarvelLogic().getMarvelChars(name = "cap", limit = 5)
             ){sendMarvelItem(it)}
 
             withContext(Dispatchers.Main){

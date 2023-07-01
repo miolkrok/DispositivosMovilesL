@@ -7,10 +7,10 @@ import com.example.primera_view.data.entities.MarvelChars
 class JikanAnimeLogic {
 
     suspend fun getAllAnimes() : List<MarvelChars>{
-        var call = ApiConnection.getJikanConection()
-        val response = call.create(JikanEndpoint::class.java).getAllAnimes()
 
         var itemList = arrayListOf<MarvelChars>()
+
+        val response = ApiConnection.getService(ApiConnection.typeApi.Jikan, JikanEndpoint::class.java).getAllAnimes()
 
         if(response.isSuccessful) {
             response.body()!!.data.forEach {
