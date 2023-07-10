@@ -2,7 +2,7 @@ package com.example.primera_view.logic.jikanLogic
 
 import com.example.primera_view.data.connections.ApiConnection
 import com.example.primera_view.data.endpoints.JikanEndpoint
-import com.example.primera_view.data.entities.MarvelChars
+import com.example.primera_view.logic.data.MarvelChars
 
 class JikanAnimeLogic {
 

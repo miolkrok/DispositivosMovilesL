@@ -1,7 +1,7 @@
 package com.example.primera_view.logic.lists
 
 import com.example.primera_view.data.entities.LoginUser
-import com.example.primera_view.data.entities.MarvelChars
+import com.example.primera_view.logic.data.MarvelChars
 
 class ListsItems {
 

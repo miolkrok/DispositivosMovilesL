@@ -2,11 +2,8 @@ package com.example.primera_view.ui.activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.renderscript.ScriptGroup.Binding
-import com.example.primera_view.R
-import com.example.primera_view.data.entities.MarvelChars
+import com.example.primera_view.logic.data.MarvelChars
 import com.example.primera_view.databinding.ActivityDetailsMarvelItemBinding
-import com.example.primera_view.databinding.MarvelCharactersBinding
 import com.squareup.picasso.Picasso
 
 class DetailsMarvelItem : AppCompatActivity() {
