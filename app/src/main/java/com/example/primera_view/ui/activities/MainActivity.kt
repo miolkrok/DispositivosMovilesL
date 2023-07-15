@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.primera_view.databinding.ActivityMainBinding
 import com.example.primera_view.login.validator.LoginValidator
+import com.example.primera_view.ui.utilities.Primeraview
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.*
 
@@ -29,6 +30,9 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         initClass()
+//        val db = Primeraview.getDbInstance()
+//        db.marvelDao()
+
     }
 
 

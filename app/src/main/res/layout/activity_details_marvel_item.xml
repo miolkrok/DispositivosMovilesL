@@ -44,5 +44,15 @@
         app:layout_constraintVertical_bias="0.058"
         tools:layout_editor_absoluteX="0dp" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="62dp"
+        android:layout_height="62dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toTopOf="@+id/txtComic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.926"></com.google.android.material.floatingactionbutton.FloatingActionButton>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

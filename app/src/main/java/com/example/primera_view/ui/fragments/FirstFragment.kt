@@ -12,14 +12,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.primera_view.Metodos
 //import com.example.primera_view.ARG_PARAM1
 //import com.example.primera_view.ARG_PARAM2
 import com.example.primera_view.R
 import com.example.primera_view.logic.data.MarvelChars
 import com.example.primera_view.databinding.FragmentFirstBinding
+import com.example.primera_view.logic.data.getMarvelCharsDB
 import com.example.primera_view.logic.jikanLogic.MarvelLogic
 import com.example.primera_view.ui.activities.DetailsMarvelItem
 import com.example.primera_view.ui.adapters.MarvelAdapter
+import com.example.primera_view.ui.utilities.Primeraview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -39,7 +42,10 @@ class FirstFragment : Fragment() {
         private lateinit var  gManager : GridLayoutManager
         private var rvAdapter: MarvelAdapter =
             MarvelAdapter { sendMarvelItem(it) }
+        private var page =1
 
+        private var limit = 99
+        private var offset = 0
         private var marvelCharsItems: MutableList<MarvelChars> = mutableListOf<MarvelChars>()
 
 
@@ -75,10 +81,10 @@ class FirstFragment : Fragment() {
         )
         binding.spinner.adapter = adapter
 
-        chargeDataRV("cap")
+        chargeDataRVDB(1)
 
         binding.rvSwipe.setOnRefreshListener {
-            chargeDataRV("cap")
+            chargeDataRVDB(1)
             binding.rvSwipe.isRefreshing = false
         }
 
@@ -171,7 +177,7 @@ class FirstFragment : Fragment() {
 
     }
 
-    fun chargeDataCh(search:String){
+    fun chargeDataAPI(search:String){
         lifecycleScope.launch(Dispatchers.IO){
             rvAdapter.items = MarvelLogic().getAllMarvelChars(0,99)
             withContext(Dispatchers.Main){
@@ -183,12 +189,77 @@ class FirstFragment : Fragment() {
         }
     }
 
-    fun sendMarvelItem(item: MarvelChars) {
-        val i = Intent(requireActivity(), DetailsMarvelItem::class.java)
-        i.putExtra("name", item)
-        startActivity(i)
+    fun chargeDataRVDB(pos: Int) {
+
+        lifecycleScope.launch(Dispatchers.Main) {
+            marvelCharsItems = withContext(Dispatchers.IO) {
+                    var marvelCharsItems = MarvelLogic()
+                        .getAllMarvelCharsDB()
+                        .toMutableList()
+
+                if(marvelCharsItems.isEmpty()){
+                    marvelCharsItems = MarvelLogic().getAllMarvelChars(0,99)
+                    MarvelLogic().insertMarvelCharstoDB(marvelCharsItems)
+                    }
+                return@withContext marvelCharsItems
+                }
+            rvAdapter.items = marvelCharsItems
+            binding.rvMarvelChars.apply {
+                this.adapter = rvAdapter
+                this.layoutManager = gManager;
+                gManager.scrollToPositionWithOffset(pos,10)
+            }
+        }
+
+
     }
 
+    suspend fun chargeDataInit(pos: Int) {
+        if (Metodos().isOnline(requireActivity())) {
+            marvelCharsItems = withContext(Dispatchers.IO) {
+                return@withContext MarvelLogic().getInitChars(page)
+            }
+            rvAdapter.items = marvelCharsItems
+            binding.rvMarvelChars.apply {
+                this.adapter = rvAdapter
+                this.layoutManager = gManager;
+                gManager.scrollToPositionWithOffset(pos, 10)
+            }
+            page++
+        }
+    }
+
+    suspend fun chargeDataRVAPI(limit: Int,offset: Int) {
+            marvelCharsItems = withContext(Dispatchers.IO) {
+                return@withContext MarvelLogic().getAllMarvelChars(
+                    offset,limit)
+            }
+            rvAdapter.items = marvelCharsItems
+            binding.rvMarvelChars.apply {
+                this.adapter = rvAdapter
+                this.layoutManager = gManager;
+            }
+            this@FirstFragment.offset = offset + limit
+    }
+
+    fun sendMarvelItem(item: MarvelChars) {
+        lifecycleScope.launch(Dispatchers.Main) {
+            val i = Intent(requireActivity(), DetailsMarvelItem::class.java)
+            i.putExtra("name", item)
+            startActivity(i)
+        }
+    }
+    fun saveMarvelItem(item: MarvelChars):Boolean {
+        lifecycleScope.launch(Dispatchers.Main){
+            withContext(Dispatchers.IO){
+                Primeraview
+                    .getDbInstance()
+                    .marvelDao()
+                    .insertMarvelChar(listOf(item.getMarvelCharsDB()))
+            }
+        }
+        return true
+    }
 }
 
 
