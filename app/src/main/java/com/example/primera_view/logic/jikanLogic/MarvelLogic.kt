@@ -84,7 +84,7 @@ class MarvelLogic {
                 toMutableList()
             if(items.isEmpty()){
                 items = (MarvelLogic().getAllMarvelChars(
-                    0,page * 3))
+                    0,page * 3) as MutableList<MarvelChars>)
                 MarvelLogic().insertMarvelCharstoDB(items)
             }
         }catch (ex: Exception) {
