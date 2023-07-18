@@ -7,7 +7,6 @@
     android:background="@color/fondo"
     tools:context=".ui.activities.MainActivity2">
 
-
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_width="wrap_content"

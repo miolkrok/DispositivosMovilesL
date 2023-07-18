@@ -1,12 +1,15 @@
 package com.example.primera_view.ui.fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.widget.addTextChangedListener
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -21,9 +24,15 @@ import com.example.primera_view.databinding.FragmentFirstBinding
 import com.example.primera_view.logic.data.getMarvelCharsDB
 import com.example.primera_view.logic.jikanLogic.MarvelLogic
 import com.example.primera_view.ui.activities.DetailsMarvelItem
+import com.example.primera_view.ui.activities.dataStore
 import com.example.primera_view.ui.adapters.MarvelAdapter
+import com.example.primera_view.ui.data.UserDataStore
 import com.example.primera_view.ui.utilities.Primeraview
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -66,6 +75,16 @@ class FirstFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        lifecycleScope.launch(Dispatchers.IO){
+            getDataStore().collect() { user ->
+                Log.d("UCE",user.email)
+                Log.d("UCE",user.name)
+                Log.d("UCE",user.session)
+            }
+        }
+
+
         val names = arrayListOf<String>(
             "Carlos",
             "Juan",
@@ -249,6 +268,16 @@ class FirstFragment : Fragment() {
             startActivity(i)
         }
     }
+
+    private  fun getDataStore() = requireActivity().dataStore.data.map{ prefs ->
+        UserDataStore(
+            name = prefs[stringPreferencesKey("usuario")].orEmpty(),
+            email = prefs[stringPreferencesKey("contrasenia")].orEmpty(),
+            session = prefs[stringPreferencesKey("pass")].orEmpty()
+        )
+
+    }
+
     fun saveMarvelItem(item: MarvelChars):Boolean {
         lifecycleScope.launch(Dispatchers.Main){
             withContext(Dispatchers.IO){
@@ -260,6 +289,8 @@ class FirstFragment : Fragment() {
         }
         return true
     }
+
+
 }
 
 
