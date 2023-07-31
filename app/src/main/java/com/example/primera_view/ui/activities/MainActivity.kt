@@ -1,30 +1,48 @@
 package com.example.primera_view.ui.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.location.Geocoder
+import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
+import android.speech.RecognizerIntent
 import android.util.Log
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+
 import androidx.activity.result.contract.ActivityResultContracts.*
+import androidx.appcompat.app.AlertDialog
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
+import com.example.primera_view.R
 import com.example.primera_view.databinding.ActivityMainBinding
 import com.example.primera_view.login.validator.LoginValidator
-import com.example.primera_view.ui.utilities.Primeraview
+import com.example.primera_view.ui.utilities.MyLocationManager
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.CurrentLocationRequest
+
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsStatusCodes
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Locale
 import java.util.UUID
 
 val Context.dataStore: DataStore<androidx.datastore.preferences.core.Preferences>
@@ -36,6 +54,132 @@ class MainActivity : AppCompatActivity() {
 
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest : LocationRequest
+    private lateinit var locationCallback : LocationCallback
+    private lateinit var client:SettingsClient
+    private lateinit var locationSettingsRequest : LocationSettingsRequest
+
+
+    private var currentLocation: Location? =null
+
+    private var speechToText = registerForActivityResult(StartActivityForResult()){activityResult ->
+        val sn = Snackbar.make(
+            binding.textView," ",
+            Snackbar.LENGTH_LONG
+        )
+        var message = ""
+        when(activityResult.resultCode){
+            RESULT_OK->{
+                val msg = activityResult.data?.getStringArrayExtra(
+                    RecognizerIntent.EXTRA_RESULTS
+                )?.get(0)
+                    .toString()
+                if(msg.isNotEmpty()){
+                    val intent = Intent(Intent.ACTION_WEB_SEARCH)
+                    intent.setClassName("com.google.android.googlequicksearchbox",
+                        "com.google.android.googlequicksearchbox.SearchActivity")
+                    intent.putExtra(SearchManager.QUERY, msg)
+                    startActivity(intent)
+                }
+            }
+            RESULT_CANCELED->{
+                message = "Proceso cancelado"
+                sn.setBackgroundTint(resources.getColor(R.color.buttonCancel))
+            }
+            else->{
+                message = "Ocurrio un error"
+                sn.setBackgroundTint(resources.getColor(R.color.buttonCancel))
+            }
+        }
+        sn.setText(message)
+        sn.show()
+
+    }
+
+    @SuppressLint("MissingPermission")
+    private var locationContract = registerForActivityResult(RequestPermission()){isGranted ->
+        when(isGranted){
+            true ->{
+//                val alert = AlertDialog.Builder(this).apply {
+//                    setTitle("Notificacion")
+//                    setMessage("Por favor verifique que el gps este activo")
+//                    setPositiveButton("verificar") { dialog, id->
+//                        val i = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+//                        startActivity(i)
+//                        dialog.dismiss()
+//                    }
+//                    setCancelable(false)
+//                }.show()
+                client.checkLocationSettings(locationSettingsRequest).apply {
+                    addOnSuccessListener {
+                    val task = fusedLocationProviderClient.lastLocation
+                    task.addOnSuccessListener {location ->
+                        fusedLocationProviderClient.requestLocationUpdates(
+                            locationRequest,
+                            locationCallback,
+                            Looper.getMainLooper())
+                    }
+                }
+                    addOnFailureListener {ex->
+                        if(ex is ResolvableApiException){
+//                        startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
+                            ex.startResolutionForResult(
+                            this@MainActivity,
+                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED
+                        )
+//                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }
+
+
+//                        com.google.android.material.R.style.ThemeOverlay_MaterialAlertDialog_Material3_Title_Icon
+//                        val alert = AlertDialog.Builder(this, com.google.android.material.R.style.ThemeOverlay_Material3_Dialog)
+//                        alert.apply {
+//                            setTitle("Alerta")
+//                            setMessage("Existe un problema de posicionamiento global en el sistema")
+//                            setPositiveButton("OK") {dialog,id ->
+//                                dialog.dismiss()
+//                            }
+//                            setNegativeButton("Cancelar"){dialog,id ->
+//                                dialog.dismiss()
+//                            }
+//                            setCancelable(false)
+////                        setNegativeButton("")
+//                        }.create()
+//                        alert.show()
+
+//                        location.longitude
+//                        location.latitude
+//                    val a = Geocoder(this)
+//                    a.getFromLocation(it.latitude,it.longitude, 1)
+                }
+//                client.checkLocationSettings(locationSettingsRequest).addOnFailureListener {
+//                        ex->
+//                    if(ex is ResolvableApiException){
+//                        ex.startResolutionForResult(
+//                            this@MainActivity,
+//                        LocationSettingsStatusCodes.RESOLUTION_REQUIRED
+//                        )
+//                    }
+                }
+            }
+            shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)->{
+                Snackbar.make(binding.editName,
+                    "Ayude con el permiso por favor",
+                    Snackbar.LENGTH_LONG)
+                    .show()
+
+            }
+            false ->{
+                Snackbar.make(binding.editName,
+                    "denegado",
+                    Snackbar.LENGTH_LONG)
+                    .show()
+            }
+
+        }
+
+    }
     var a =2
 
     @SuppressLint("MissingInflatedId")
@@ -43,7 +187,31 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
         Log.d("UCE", "Entrando a Create")
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest = LocationRequest.Builder(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            1000)
+//            .setMaxUpdates(3)
+            .build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                if(locationResult !=null){
+                    locationResult.locations.forEach {location->
+                        currentLocation = location
+                        Log.d("UCE","Ubicacion : ${location.latitude}," +
+                        "${location.longitude}")
+                    }
+                }
+            }
+        }
+        client = LocationServices.getSettingsClient(this)
+        locationSettingsRequest = LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest).build()
     }
 
     override fun onStart() {
@@ -56,6 +224,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    @SuppressLint("MissingPermission")
     private fun initClass(){
 
 //        binding.button1.setOnClickListener() {
@@ -107,51 +276,153 @@ class MainActivity : AppCompatActivity() {
                 Snackbar.make(binding.textView, "Usuario o contraseña invalidos", Snackbar.LENGTH_LONG).show()
             }
         }
+//        val locationContract = registerForActivityResult(RequestPermission()){isGranted ->
+////            if(isGranted == true){
+////                val task = fusedLocationProviderClient.lastLocation
+////                task.addOnSuccessListener {
+////                    if(task.result != null){
+////                        Snackbar.make(
+////                            binding.editName,
+////                            "${it.latitude}, ${it.longitude}",
+////                            Snackbar.LENGTH_LONG)
+////                            .show()
+////                    }else {
+////                        Snackbar.make(binding.editName,
+////                            "Encienda el GPS por favor",
+////                            Snackbar.LENGTH_LONG)
+////                            .show()
+////                    }
+////
+////                }
+////
+////            }else {
+////
+////                Snackbar.make(binding.editName,
+////                    "denegado",
+////                    Snackbar.LENGTH_LONG)
+////                    .show()
+////            }
+//            when(isGranted){
+//                true ->{
+//                    fusedLocationProviderClient.lastLocation.addOnSuccessListener {
+//                        it.longitude
+//                        it.latitude
+//                        val a = Geocoder(this)
+//                        a.getFromLocation(it.latitude,it.longitude, 1)
+//                    }
+//                }
+//                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION)->{
+//                    Snackbar.make(binding.editName,
+//                        "Ayude con el permiso por favor",
+//                        Snackbar.LENGTH_LONG)
+//                        .show()
+//
+//                }
+//                false ->{
+//                    Snackbar.make(binding.editName,
+//                        "denegado",
+//                        Snackbar.LENGTH_LONG)
+//                        .show()
+//                }
+//
+//            }
+//
+//        }
         binding.button3.setOnClickListener {
+            locationContract.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 //            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("tel:0123456789"))
 //            //Uri.parse("geo: -0.2006288,-78.5786066")
 //            //Uri.parse("https://www.google.com.ec/")
 //
 //            startActivity(intent)
 //        }
-            val intent = Intent(Intent.ACTION_WEB_SEARCH)
-            intent.setClassName("com.google.android.googlequicksearchbox",
-            "com.google.android.googlequicksearchbox.SearchActivity")
-            intent.putExtra(SearchManager.QUERY, "UCE")
-            startActivity(intent)
-        }
-        val appResultLocal = registerForActivityResult(StartActivityForResult()){resultActivity ->
-            when(resultActivity.resultCode) {
-                RESULT_OK ->{
-                    Snackbar.make(binding.textView,"Resultado Exitoso",Snackbar.LENGTH_LONG)
-                        .show()
-//                    Log.d("UCE", "Resultado exitoso")
-                }
-                RESULT_CANCELED -> {
-                    Snackbar.make(binding.textView,"Resultado fallido",Snackbar.LENGTH_LONG)
-                        .show()
-//                    Log.d("UCE", "Resultado fallido")
-                }
-                else->{
-                    Snackbar.make(binding.textView,"Resultado dudoso",Snackbar.LENGTH_LONG)
-                        .show()
-//                    Log.d("UCE", "Resultado dudoso")
-                }
-            }
-//            if(resultActivity.resultCode == RESULT_OK){
-//
-//            }else {
-//                if (resultActivity.resultCode == RESULT_CANCELED){
-//
-//                }else{
-//
-//                }
-//            }
+//            val intent = Intent(Intent.ACTION_WEB_SEARCH)
+//            intent.setClassName("com.google.android.googlequicksearchbox",
+//            "com.google.android.googlequicksearchbox.SearchActivity")
+//            intent.putExtra(SearchManager.QUERY, "UCE")
+//            startActivity(intent)
+
 
         }
+        val appResultLocal = registerForActivityResult(StartActivityForResult()){resultActivity ->
+
+            val sn = Snackbar.make(
+                binding.textView," ",
+                Snackbar.LENGTH_LONG
+            )
+            val message =when(resultActivity.resultCode) {
+                RESULT_OK ->{
+                    sn.setBackgroundTint(resources.getColor(R.color.facebook))
+                    resultActivity.data?.getStringExtra("result")
+                        .orEmpty()
+
+
+                }
+                RESULT_CANCELED -> {
+                    sn.setBackgroundTint(resources.getColor(R.color.buttonCancel))
+                    resultActivity.data?.getStringExtra("result")
+                        .orEmpty()
+                }
+                else->{
+                    "Resultado Dudoso"
+                }
+            }
+            sn.setText(message)
+            sn.show()
+
+
+        }
+
+//        val speechToText = registerForActivityResult(StartActivityForResult()){activityResult ->
+//            val sn = Snackbar.make(
+//                binding.textView," ",
+//                Snackbar.LENGTH_LONG
+//            )
+//            var message = ""
+//            when(activityResult.resultCode){
+//                RESULT_OK->{
+//                    val msg = activityResult.data?.getStringArrayExtra(
+//                        RecognizerIntent.EXTRA_RESULTS
+//                    )?.get(0)
+//                        .toString()
+//                    if(msg.isNotEmpty()){
+//                        val intent = Intent(Intent.ACTION_WEB_SEARCH)
+//                        intent.setClassName("com.google.android.googlequicksearchbox",
+//                            "com.google.android.googlequicksearchbox.SearchActivity")
+//                        intent.putExtra(SearchManager.QUERY, msg)
+//                        startActivity(intent)
+//                    }
+//                }
+//                RESULT_CANCELED->{
+//                    message = "Proceso cancelado"
+//                    sn.setBackgroundTint(resources.getColor(R.color.buttonCancel))
+//                }
+//                else->{
+//                    message = "Ocurrio un error"
+//                    sn.setBackgroundTint(resources.getColor(R.color.buttonCancel))
+//                }
+//            }
+//            sn.setText(message)
+//            sn.show()
+//
+//        }
+
         binding.button4.setOnClickListener {
-            val resIntent = Intent(this, ResultActivity::class.java)
-            appResultLocal.launch(resIntent)
+
+            val intentSpeech = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            intentSpeech.putExtra(
+                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+            )
+            intentSpeech.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+                Locale.getDefault()
+            )
+            intentSpeech.putExtra(
+                RecognizerIntent.EXTRA_PROMPT,"Di algo..."
+            )
+            speechToText.launch(intentSpeech)
+//            val resIntent = Intent(this, ResultActivity::class.java)
+//            appResultLocal.launch(resIntent)
 
         }
     }
@@ -169,7 +440,17 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        fusedLocationProviderClient
+            .removeLocationUpdates(locationCallback)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+    }
+    private fun test(){
+        var location = MyLocationManager(this)
+        location.getUserLocation()
     }
 }
