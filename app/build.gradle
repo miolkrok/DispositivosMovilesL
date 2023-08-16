@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'kotlin-kapt'
+    // Add the Google services Gradle plugin
+    id 'com.google.gms.google-services'
+
 
 }
 
@@ -82,6 +85,22 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
+
+    implementation "androidx.biometric:biometric-ktx:1.2.0-alpha05"
+
+    //
+    implementation "com.facebook.shimmer:shimmer:0.1.0@aar"
+
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:32.2.2')
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+
+
+
+
 
 
 

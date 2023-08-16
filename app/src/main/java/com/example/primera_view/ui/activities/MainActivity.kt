@@ -13,6 +13,7 @@ import android.os.Looper
 import android.provider.Settings
 import android.speech.RecognizerIntent
 import android.util.Log
+import android.widget.Toast
 
 import androidx.activity.result.contract.ActivityResultContracts.*
 import androidx.appcompat.app.AlertDialog
@@ -38,8 +39,12 @@ import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Task
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.snackbar.Snackbar.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -60,6 +65,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var client:SettingsClient
     private lateinit var locationSettingsRequest : LocationSettingsRequest
 
+    private lateinit var auth: FirebaseAuth
+    private val TAG="UCE"
 
     private var currentLocation: Location? =null
 
@@ -188,6 +195,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Initialize Firebase Auth
+        auth = Firebase.auth
+
+        binding.button1.setOnClickListener {
+//            authWithFirebaseEmail(binding.editName.text.toString(),binding.editPass.text.toString())
+            signInWithEmailAndPassword(binding.editName.text.toString(),binding.editPass.text.toString())
+        }
 
         Log.d("UCE", "Entrando a Create")
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -214,9 +228,67 @@ class MainActivity : AppCompatActivity() {
             .addLocationRequest(locationRequest).build()
     }
 
+    private fun authWithFirebaseEmail(email:String,password:String) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "createUserWithEmail:success")
+                    val user = auth.currentUser
+//                    updateUI(user)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "createUserWithEmail:failure", task.exception)
+                    Toast.makeText(
+                        baseContext,
+                        "Authentication failed.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+//                    updateUI(null)
+                }
+            }
+    }
+    private fun signInWithEmailAndPassword(email:String,password:String){
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithEmail:success")
+                    val user = auth.currentUser
+//                    updateUI(user)
+                    startActivity(Intent(this,BiometricActivity::class.java))
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    Toast.makeText(
+                        baseContext,
+                        "Authentication failed.",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+//                    updateUI(null)
+                }
+            }
+    }
+
+    private fun recoveryPasswordWithEmail(email:String){
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task->
+                if(task.isSuccessful){
+                    Toast.makeText(this,"Correo de recuperacion enviado correctamente",
+                            Toast.LENGTH_SHORT).show()
+                    MaterialAlertDialogBuilder(this).apply {
+                        setTitle("Alert")
+                        setMessage("Correo de recuperacion enviado correctamente")
+                        setCancelable(true)
+                    }.show()
+                }
+            }
+    }
+
     override fun onStart() {
         super.onStart()
-        initClass()
+//        initClass()
+
 //        val db = Primeraview.getDbInstance()
 //        db.marvelDao()
 
