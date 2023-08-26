@@ -6,15 +6,14 @@ import com.example.primera_view.animiolknova.data.endpoints.MyAnimeListEndPoint
 import com.example.primera_view.animiolknova.data.entities.heroku.AnimeMCResponse
 import com.example.primera_view.animiolknova.data.entities.myanimelist.ResponseMyAnimeList
 import com.example.primera_view.data.connections.ApiConnection
-import java.util.Collections
 import java.util.stream.Collectors
 
-class MyAnimeListUC {
+class MyAnimeListC {
 
     suspend fun obtenerAnime(id: String): ResponseMyAnimeList? {
         var data: ResponseMyAnimeList? = null
         try {
-            val service = ApiConnection.getService(MyAnimeListEndPoint::class.java)
+            val service = ApiConnection.getService(ApiConnection.typeApi.Animelist ,MyAnimeListEndPoint::class.java)
             val response = service.searchAnimeByID(id, "title,synopsis,mean,genres,rating")
             if (response.isSuccessful) {
                 data = response.body()!!

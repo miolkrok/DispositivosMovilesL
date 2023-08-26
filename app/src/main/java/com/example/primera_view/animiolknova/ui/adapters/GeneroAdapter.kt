@@ -1,18 +1,18 @@
-package com.moncayo.pilco.anisham.ui.adapters
+package com.example.primera_view.animiolknova.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.moncayo.pilco.anisham.R
-import com.moncayo.pilco.anisham.databinding.ItemGeneroBinding
+import com.example.primera_view.R
+import com.example.primera_view.databinding.GeneroCharBinding
 
 
 class GeneroAdapter : RecyclerView.Adapter<GeneroAdapter.GeneroViewHolder>() {
     var dataList: List<String> = emptyList()
 
     class GeneroViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private var binding: ItemGeneroBinding = ItemGeneroBinding.bind(view)
+        private var binding: GeneroCharBinding = GeneroCharBinding.bind(view)
         fun render(item: String) {
             binding.tvGenero.text = item.toString()
         }
@@ -20,7 +20,7 @@ class GeneroAdapter : RecyclerView.Adapter<GeneroAdapter.GeneroViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GeneroViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return GeneroViewHolder(inflater.inflate(R.layout.item_genero, parent, false))
+        return GeneroViewHolder(inflater.inflate(R.layout.genero_char, parent, false))
     }
 
     override fun getItemCount(): Int = dataList.size

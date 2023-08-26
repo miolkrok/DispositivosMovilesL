@@ -1,4 +1,5 @@
-package com.moncayo.pilco.anisham.model.entities.api.myAnimeList
+package com.example.primera_view.animiolknova.data.entities.myanimelist
+
 
 data class ResponseMyAnimeList(
     val genres: List<Genre>,

@@ -1,3 +1,4 @@
-package com.moncayo.pilco.anisham.model.entities.api.monosChinos
+package com.example.primera_view.animiolknova.data.entities.heroku
+
 
 class SearchMCResponse : ArrayList<SearchMCResponseItem>()

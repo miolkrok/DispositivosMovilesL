@@ -8,19 +8,44 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:name=".ui.utilities.Primeraview"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_amn"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_amn_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Primeraview"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".animiolknova.ui.activities.ReproductorActivity"
+            android:exported="false"
+            android:label="@string/title_activity_reproductor"
+            android:theme="@style/Theme.Primeraview" />
+        <activity
+            android:name=".animiolknova.ui.activities.AniMiolkNovaAnimesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".animiolknova.ui.activities.AniMiolkNovaDetalleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".animiolknova.ui.activities.AniMiolkNovaMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".animiolknova.ui.activities.AniMiolkNovaBiometricActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.activities.MainActivity"
+            android:exported="false" />
         <activity
             android:name=".ui.activities.ProgressActivity"
             android:exported="false" />
@@ -48,7 +73,7 @@
             android:name=".ui.activities.MainActivity2"
             android:exported="true" />
         <activity
-            android:name=".ui.activities.MainActivity"
+            android:name=".animiolknova.ui.activities.AniMiolkNovaLoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

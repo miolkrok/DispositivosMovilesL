@@ -5,15 +5,11 @@
 
     <item
         android:id="@+id/inicio"
-        android:icon="@drawable/home_menu"
-        android:title="@string/menu_inicio" />
+        android:icon="@drawable/search"
+        android:title="@string/menu_buscar" />
     <item
         android:id="@+id/fav"
-        android:icon="@drawable/fav_menu"
+        android:icon="@drawable/favorite"
         android:title="@string/menu_favoritos" />
-    <item
-        android:id="@+id/api"
-        android:icon="@drawable/android_api_menu"
-        android:title="@string/menu_apis" />
 
 </menu>

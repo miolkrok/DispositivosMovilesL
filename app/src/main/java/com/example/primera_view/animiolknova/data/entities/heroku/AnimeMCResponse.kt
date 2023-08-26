@@ -1,4 +1,5 @@
-package com.moncayo.pilco.anisham.model.entities.api.monosChinos
+package com.example.primera_view.animiolknova.data.entities.heroku
+
 
 data class AnimeMCResponse(
     val banner: String?=null,

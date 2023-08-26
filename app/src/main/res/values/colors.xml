@@ -11,6 +11,9 @@
     <color name="facebook">#3b5998</color>
     <color name="marvel">#a6cfe4</color>
     <color name="marvelrojo">#ED1D24</color>
+    <color name="fondoanime">#95FFAB2C</color>
+    <color name="letrasanime">#ffc72c</color>
+    <color name="anime_background">#11111f</color>
 
 
 </resources>
